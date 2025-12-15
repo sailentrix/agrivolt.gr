@@ -6,6 +6,7 @@
   <meta name="robots" content="noindex, nofollow"/>
   <title>AGRIVOLT – Ισολογισμοί</title>
   <link rel="stylesheet" href="style.css"/>
+  
 </head>
 <body>
   <nav class="nav">
@@ -20,26 +21,26 @@
     </div>
   </nav>
 
-  
-<main>
+  <main>
   <header class="hero">
     <div class="container">
       <h1>Ισολογισμοί</h1>
-      <p>Υποχρεωτική ανάρτηση οικονομικών καταστάσεων.</p>
+      <p>Υποχρεωτική ανάρτηση οικονομικών καταστάσεων (PDF).</p>
     </div>
   </header>
 
   <section class="container">
     <div class="card">
-      <div class="list">
-        <a href="#"><span>Ισολογισμός 2024</span><span>PDF</span></a>
-        <a href="#"><span>Ισολογισμός 2023</span><span>PDF</span></a>
-      </div>
-      <p style="color:var(--muted)">* Αν δεν υπάρχουν διαθέσιμα αρχεία, οι σύνδεσμοι παραμένουν ως placeholders.</p>
+      <h2>Αρχεία</h2>
+      <div id="folderList" aria-label="Λίστα αρχείων"></div>
     </div>
   </section>
 </main>
 
+<script>
+  // Note: manifest.json is stored in the same folder as the files.
+  renderFolderList("folderList", "assets/isologismoi/manifest.json");
+</script>
 
   <footer class="footer">
     <div class="container">
@@ -47,5 +48,42 @@
       <div>© 2025 AGRIVOLT ΜΟΝΟΠΡΟΣΩΠΗ ΙΚΕ</div>
     </div>
   </footer>
+
+  <script>
+  async function renderFolderList(containerId, manifestPath) {
+    const el = document.getElementById(containerId);
+    if (!el) return;
+
+    try {
+      const res = await fetch(manifestPath, { cache: "no-store" });
+      if (!res.ok) throw new Error("manifest fetch failed");
+      const items = await res.json();
+
+      if (!Array.isArray(items) || items.length === 0) {
+        el.innerHTML = '<p style="margin:0;color:var(--muted);">Δεν υπάρχουν διαθέσιμα αρχεία προς ανάρτηση αυτή τη στιγμή.</p>';
+        return;
+      }
+
+      const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({
+        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+      }[c]));
+
+      const links = items
+        .filter(x => x && typeof x.file === "string" && x.file.length)
+        .map(x => {
+          const file = x.file;
+          const label = esc(file.replace(/\.[^/.]+$/, "")); // filename without extension
+          const href = esc(file);
+          const ext = esc((file.split(".").pop() || "").toUpperCase());
+          return `<a href="${href}" target="_blank" rel="noopener"><span>${label}</span><span class="badge">${ext || "FILE"}</span></a>`;
+        })
+        .join("");
+
+      el.innerHTML = `<div class="list">${links}</div>`;
+    } catch (e) {
+      el.innerHTML = '<p style="margin:0;color:var(--muted);">Δεν είναι δυνατή η αυτόματη φόρτωση αρχείων. Βεβαιωθείτε ότι η σελίδα σερβίρεται από web server (όχι ως file://) και ότι υπάρχει manifest.json στον φάκελο.</p>';
+    }
+  }
+</script>
 </body>
 </html>
