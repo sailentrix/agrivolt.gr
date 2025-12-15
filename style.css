@@ -1,0 +1,75 @@
+﻿:root {
+  --brand-primary: #0d6efd;
+  --brand-dark: #0a1f44;
+  --brand-muted: #6c7a89;
+  --bs-body-bg: #f5f7fb;
+}
+
+body {
+  font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  background-color: var(--bs-body-bg);
+  color: var(--brand-dark);
+  line-height: 1.65;
+}
+
+.hero {
+  background: linear-gradient(140deg, #0d6efd, #123b8f);
+  border-bottom-left-radius: 2.5rem;
+  border-bottom-right-radius: 2.5rem;
+}
+
+.hero-card {
+  border: 0;
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.75rem;
+  color: var(--brand-muted);
+}
+
+.text-white-75 {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.info-card {
+  background-color: #fff;
+  border: 1px solid rgba(13, 110, 253, 0.08);
+}
+
+.info-list {
+  margin: 0;
+}
+
+.info-list dt {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--brand-muted);
+  margin-bottom: 0.25rem;
+}
+
+.info-list dd {
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: var(--brand-dark);
+}
+
+.info-list dd:last-child {
+  margin-bottom: 0;
+}
+
+.contact-card {
+  background: linear-gradient(135deg, rgba(13, 110, 253, 0.12), rgba(13, 110, 253, 0.05));
+  border: 1px solid rgba(13, 110, 253, 0.15);
+}
+
+.badge.bg-primary-subtle {
+  background-color: rgba(13, 110, 253, 0.12) !important;
+  font-weight: 600;
+}
+
+footer {
+  background-color: #fff;
+}
