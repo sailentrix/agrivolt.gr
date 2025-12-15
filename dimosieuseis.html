@@ -37,9 +37,7 @@
   </section>
 </main>
 
-<script>
-  renderFolderList("folderList", "assets/dimosieuseis/manifest.json");
-</script>
+
 
   <footer class="footer">
     <div class="container">
@@ -48,41 +46,51 @@
     </div>
   </footer>
 
-  <script>
-  async function renderFolderList(containerId, manifestPath) {
+  
+<script>
+  function renderFolderList(containerId, manifestPath) {
     const el = document.getElementById(containerId);
     if (!el) return;
 
-    try {
-      const res = await fetch(manifestPath, { cache: "no-store" });
-      if (!res.ok) throw new Error("manifest fetch failed");
-      const items = await res.json();
+    const basePath = manifestPath.replace(/\/[^\/]*$/, "/"); // directory of manifest
 
-      if (!Array.isArray(items) || items.length === 0) {
-        el.innerHTML = '<p style="margin:0;color:var(--muted);">Δεν υπάρχουν διαθέσιμα αρχεία προς ανάρτηση αυτή τη στιγμή.</p>';
-        return;
-      }
+    fetch(manifestPath, { cache: "no-store" })
+      .then(res => {
+        if (!res.ok) throw new Error("manifest fetch failed");
+        return res.json();
+      })
+      .then(items => {
+        if (!Array.isArray(items) || items.length === 0) {
+          el.innerHTML = '<p style="margin:0;color:var(--muted);">Δεν υπάρχουν διαθέσιμα αρχεία προς ανάρτηση αυτή τη στιγμή.</p>';
+          return;
+        }
 
-      const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({
-        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-      }[c]));
+        const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({
+          "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+        }[c]));
 
-      const links = items
-        .filter(x => x && typeof x.file === "string" && x.file.length)
-        .map(x => {
-          const file = x.file;
-          const label = esc(file.replace(/\.[^/.]+$/, "")); // filename without extension
-          const href = esc(file);
-          const ext = esc((file.split(".").pop() || "").toUpperCase());
-          return `<a href="${href}" target="_blank" rel="noopener"><span>${label}</span><span class="badge">${ext || "FILE"}</span></a>`;
-        })
-        .join("");
+        const links = items
+          .filter(x => x && typeof x.file === "string" && x.file.length)
+          .map(x => {
+            const file = x.file;
+            const label = esc(file.replace(/\.[^/.]+$/, "")); // without extension
+            const href = esc(basePath + file);
+            const ext = esc((file.split(".").pop() || "").toUpperCase());
+            return `<a href="${href}" target="_blank" rel="noopener"><span>${label}</span><span class="badge">${ext || "FILE"}</span></a>`;
+          })
+          .join("");
 
-      el.innerHTML = `<div class="list">${links}</div>`;
-    } catch (e) {
-      el.innerHTML = '<p style="margin:0;color:var(--muted);">Δεν είναι δυνατή η αυτόματη φόρτωση αρχείων. Βεβαιωθείτε ότι η σελίδα σερβίρεται από web server (όχι ως file://) και ότι υπάρχει manifest.json στον φάκελο.</p>';
-    }
+        el.innerHTML = `<div class="list">${links}</div>`;
+      })
+      .catch(() => {
+        el.innerHTML = '<p style="margin:0;color:var(--muted);">Δεν είναι δυνατή η αυτόματη φόρτωση αρχείων. Ελέγξτε ότι υπάρχει manifest.json στον φάκελο και ότι το site σερβίρεται κανονικά.</p>';
+      });
   }
+</script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderFolderList("folderList", "assets/dimosieuseis/manifest.json");
+  });
 </script>
 </body>
 </html>
