@@ -80,7 +80,7 @@
           })
           .join("");
 
-        el.innerHTML = `<div class="list">${links}</div>`;
+        el.innerHTML = `<div class="list" style="display: flex; flex-direction: column; gap: 10px;">${links}</div>`;
       })
       .catch(() => {
         el.innerHTML = '<p style="margin:0;color:var(--muted);">Δεν είναι δυνατή η αυτόματη φόρτωση αρχείων. Ελέγξτε ότι υπάρχει manifest.json στον φάκελο και ότι το site σερβίρεται κανονικά.</p>';
